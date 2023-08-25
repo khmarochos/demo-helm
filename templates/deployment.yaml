@@ -20,7 +20,17 @@ spec:
       labels:
         {{- include "demo-app.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- $additionalImagePullSecretName := include "demo-app.imagePullSecretName" . }}
+      {{- with
+        concat
+          (.Values.imagePullSecrets)
+          (
+            ternary
+              (list (dict "name" $additionalImagePullSecretName))
+              (list)
+              (not (empty $additionalImagePullSecretName))
+          )
+      }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}

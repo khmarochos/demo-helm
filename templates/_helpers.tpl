@@ -60,3 +60,38 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Generate or use the name of the docker credentials registry's secret
+*/}}
+{{- define "demo-app.imagePullSecretName" -}}
+{{- with .Values.dockerRegistryCredentials }}
+{{- if .create }}
+{{-
+  default
+    (printf "%s-docker-registry-credentials" (include "demo-app.fullname" $))
+    (.secretName)
+}}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Generate the string for imagePullSecret
+*/}}
+{{- define "demo-app.imagePullSecret" -}}
+{{- with .Values.dockerRegistryCredentials }}
+{{-
+  printf
+    "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"email\":\"%s\",\"auth\":\"%s\"}}}"
+    .registry
+    .username
+    .password
+    .email
+    (
+      printf "%s:%s" .username .password | b64enc
+    )
+  | b64enc
+}}
+{{- end }}
+{{- end }}

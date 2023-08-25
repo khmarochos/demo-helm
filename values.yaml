@@ -14,6 +14,14 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+dockerRegistryCredentials:
+  create: false
+  secretName: ""
+  registry: "docker.io"
+  username: ""
+  password: ""
+  email: ""
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
