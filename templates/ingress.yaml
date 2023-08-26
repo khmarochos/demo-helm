@@ -18,10 +18,22 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "demo-app.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+    {{- with .Values.ingress.annotations }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with $.Values.ingress.letsencrypt }}
+      {{- if .enabled }}
+        {{- if eq .issuer "staging" }}
+    cert-manager.io/issuer: {{ $fullName }}-{{ $.Values.letsencrypt.issuers.staging.suffix }}
+        {{- end }}
+        {{- if eq .issuer "production" }}
+    cert-manager.io/issuer: {{ $fullName }}-{{ $.Values.letsencrypt.issuers.production.suffix }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
 spec:
   {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.ingress.className }}

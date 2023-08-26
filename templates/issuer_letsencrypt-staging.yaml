@@ -1,0 +1,21 @@
+{{- if .Values.letsencrypt.issuers.staging.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ include "demo-app.fullname" . }}-{{ .Values.letsencrypt.issuers.staging.suffix }}
+  labels:
+    {{- include "demo-app.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+spec:
+  acme:
+    email: {{ .Values.letsencrypt.email }}
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: {{ include "demo-app.fullname" . }}-{{ .Values.letsencrypt.issuers.staging.suffix }}-account-key
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+{{- end }}

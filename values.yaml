@@ -88,3 +88,17 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+letsencrypt:
+  email:
+  issuers:
+    staging:
+      suffix: letsencrypt-staging
+      enabled: false
+    production:
+      suffix: letsencrypt-production
+      enabled: false
+
+cert-manager:
+  enabled: false
+  installCRDs: false
