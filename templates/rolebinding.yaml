@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dummyobjects-manager--{{ include "demo-app.serviceAccountName" . }}
+  labels:
+    {{- include "demo-app.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: dummyobjects-manager
+subjects:
+- kind: ServiceAccount
+  name: {{ include "demo-app.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}

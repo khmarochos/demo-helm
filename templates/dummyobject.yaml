@@ -1,0 +1,8 @@
+apiVersion: khmarochos.melnyk.host/v1
+kind: DummyObject
+metadata:
+  name: {{ .Values.dummyObject.name }}
+  labels:
+    {{- include "demo-app.labels" . | nindent 4 }}
+spec:
+  message: {{ .Values.dummyObject.message }}
